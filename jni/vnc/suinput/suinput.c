@@ -33,6 +33,10 @@ char* UINPUT_FILEPATHS[] = {
 };
 #define UINPUT_FILEPATHS_COUNT (sizeof(UINPUT_FILEPATHS) / sizeof(char*))
 
+#define UI_SET_PROPBIT      _IOW(UINPUT_IOCTL_BASE, 110, int)
+#define INPUT_PROP_DIRECT   0x01
+
+
 int suinput_write(int uinput_fd,
                   uint16_t type, uint16_t code, int32_t value)
 {
@@ -87,15 +91,16 @@ int suinput_open(const char* device_name, const struct input_id* id)
 //     if (ioctl(uinput_fd, UI_SET_EVBIT, EV_REL) == -1)
 //         goto err;
 
-    /* Absolute pointer motions */
-
-    if (ioctl(uinput_fd, UI_SET_EVBIT, EV_ABS) == -1)
-        goto err;
-
     /* Synchronization events, this is probably set implicitely too. */
     if (ioctl(uinput_fd, UI_SET_EVBIT, EV_SYN) == -1)
         goto err;
 
+    /* Absolute pointer motions */
+    if (ioctl(uinput_fd, UI_SET_EVBIT, EV_ABS) == -1)
+        goto err;
+
+    if (ioctl(uinput_fd, UI_SET_PROPBIT, INPUT_PROP_DIRECT) == -1)
+        goto err;
 
 
     /* Configure device to handle relative x and y axis. */

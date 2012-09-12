@@ -193,7 +193,7 @@ return 23; //I with acute -> i with grave
 void keyEvent(rfbBool down, rfbKeySym key, rfbClientPtr cl)
 {
   int code;
-  //      L("Got keysym: %04x (down=%d)\n", (unsigned int)key, (int)down);
+        L("Got keysym: %04x (down=%d)\n", (unsigned int)key, (int)down);
 
   setIdle(0);
   int sh = 0;
@@ -221,8 +221,9 @@ void keyEvent(rfbBool down, rfbKeySym key, rfbClientPtr cl)
     else
     ;//ret=suinput_release(inputfd,code);
 
-    //     L("injectKey (%d, %d) ret=%d\n", code , down,ret);    
+         L("injectKey (%d, %d) ret=%d\n", code , down,ret);    
   }
+  suinput_write(inputfd, EV_SYN, SYN_REPORT, 0);
 }
 
 
@@ -273,22 +274,26 @@ void ptrEvent(int buttonMask, int x, int y, rfbClientPtr cl)
   {
     rightClicked=1;
     suinput_press(inputfd,158); //back key
+    suinput_write(inputfd, EV_SYN, SYN_REPORT, 0);
   }
   else if (rightClicked)//right button released
   {
     rightClicked=0;
     suinput_release(inputfd,158);
+    suinput_write(inputfd, EV_SYN, SYN_REPORT, 0);
   }
 
   if (buttonMask & 2)//mid btn clicked
   {
     middleClicked=1;
     suinput_press( inputfd,KEY_END);
+    suinput_write(inputfd, EV_SYN, SYN_REPORT, 0);
   }
     else if (middleClicked)// mid btn released
     {
       middleClicked=0;
       suinput_release( inputfd,KEY_END);
+      suinput_write(inputfd, EV_SYN, SYN_REPORT, 0);
     }
     }
 
