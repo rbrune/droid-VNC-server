@@ -142,9 +142,9 @@ void initVncServer(int argc, char **argv)
 { 
 
   vncbuf = calloc(screenformat.width * screenformat.height, screenformat.bitsPerPixel/CHAR_BIT);
-  cmpbuf = calloc(screenformat.width * screenformat.height, screenformat.bitsPerPixel/CHAR_BIT);
+  //cmpbuf = calloc(screenformat.width * screenformat.height, screenformat.bitsPerPixel/CHAR_BIT);
 
-  assert(vncbuf != NULL);
+  //assert(vncbuf != NULL);
   assert(cmpbuf != NULL);
 
   if (rotation==0 || rotation==180) 
@@ -455,20 +455,20 @@ int main(int argc, char **argv)
 
 
     while (1) {
-        usec=(vncscr->deferUpdateTime+standby)*1000;
+        usec=(vncscr->deferUpdateTime)*1000;
         //clock_t start = clock();
         rfbProcessEvents(vncscr,usec);
       
-      if (idle)
-        standby+=2;
-      else
-        standby=2;
+      //if (idle)
+      //  if (standby < 1) standby+=1;
+      //else
+      //  standby=0;
       
-      if (vncscr->clientHead == NULL)
+      while (vncscr->clientHead == NULL)
       {
         idle=1;
-        standby=50;
-        continue;
+        //standby=50;
+        rfbProcessEvents(vncscr, 500*1000);
       }
 
       update_screen(); 

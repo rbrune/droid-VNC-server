@@ -44,7 +44,8 @@ void FUNCTION(void)
   else if (method==FLINGER)
     b = (OUT_T*) readBufferFlinger();
 
-  a = (OUT_T*)cmpbuf;
+  //a = (OUT_T*)cmpbuf;
+  a = (OUT_T*)vncbuf;
 //  memcpy(vncbuf,b,screenformat.width*screenformat.height*screenformat.bitsPerPixel/CHAR_BIT);
 //  rfbMarkRectAsModified(vncscr, 0, 0, vncscr->width, vncscr->height);
 //  return;
@@ -54,30 +55,40 @@ void FUNCTION(void)
   idle=1;
 
   if (rotation==0) {
+    OUT_T* f = b;
+    OUT_T* r = a;
     for (j = 0; j < vncscr->height; j++) {
-      for (i = 0; i < vncscr->width; i++) {
-        offset = j * vncscr->width;
-
-        if (method==FRAMEBUFFER)
-        pixelToVirtual = PIXEL_TO_VIRTUALPIXEL_FB(i,j);
-        else
-        pixelToVirtual = PIXEL_TO_VIRTUALPIXEL(i,j);
-
-        if (a[i + offset]!=b[pixelToVirtual]) {
-          a[i + offset]=b[pixelToVirtual];
-          if (i>max_x)
-          max_x=i;
-          if (i<min_x)
-          min_x=i;
-
-          if (j>max_y)
-          max_y=j;
-          if (j<min_y)
-          min_y=j;
-
-          idle=0;
+        for (i = 0; i < vncscr->width; i++) {
+            /*
+            offset = j * vncscr->width;
+    
+            if (method==FRAMEBUFFER)
+                pixelToVirtual = PIXEL_TO_VIRTUALPIXEL_FB(i,j);
+            else
+                pixelToVirtual = PIXEL_TO_VIRTUALPIXEL(i,j);
+    
+            if (a[i + offset]!=b[pixelToVirtual]) {
+                a[i + offset]=b[pixelToVirtual];
+            */
+             OUT_T pixel = *f;
+             if (pixel != *r) {   
+                *r = pixel;
+                
+                if (i>max_x)
+                    max_x=i;
+                else if (i<min_x)
+                    min_x=i;
+    
+                if (j>max_y)
+                    max_y=j;
+                else if (j<min_y)
+                    min_y=j;
+    
+                idle=0;
+            }
+            f++;
+            r++;
         }
-      }
     }
   }
   else if (rotation==90) {
@@ -172,7 +183,7 @@ void FUNCTION(void)
   }
 
   if (!idle) {
-    memcpy(vncbuf,a,screenformat.width*screenformat.height*screenformat.bitsPerPixel/CHAR_BIT);
+    //memcpy(vncbuf,a,screenformat.width*screenformat.height*screenformat.bitsPerPixel/CHAR_BIT);
 
     min_x--;
     min_x--;

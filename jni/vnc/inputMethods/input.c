@@ -286,13 +286,13 @@ void ptrEvent(int buttonMask, int x, int y, rfbClientPtr cl)
   if (buttonMask & 2)//mid btn clicked
   {
     middleClicked=1;
-    suinput_press( inputfd,KEY_END);
+    suinput_press( inputfd,172);
     suinput_write(inputfd, EV_SYN, SYN_REPORT, 0);
   }
     else if (middleClicked)// mid btn released
     {
       middleClicked=0;
-      suinput_release( inputfd,KEY_END);
+      suinput_release( inputfd,172);
       suinput_write(inputfd, EV_SYN, SYN_REPORT, 0);
     }
     }
